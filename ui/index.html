@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Textifier</title>
+  <link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+
+  <div class="pedal">
+
+    <!-- Corner screws -->
+    <div class="screw screw-tl"></div>
+    <div class="screw screw-tr"></div>
+    <div class="screw screw-bl"></div>
+    <div class="screw screw-br"></div>
+
+    <!-- Header / brand plate -->
+    <header class="brand-plate">
+      <div class="brand-led-row">
+        <div class="brand-text">
+          <div class="brand-name">TEXTIFIER</div>
+          <div class="brand-sub">OCR PROCESSOR</div>
+        </div>
+        <div class="led-assembly">
+          <div class="led" id="led"></div>
+          <div class="led-label">STATUS</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main panel -->
+    <main class="panel">
+
+      <!-- Filename input -->
+      <section class="input-section">
+        <label class="field-label" for="filename-input">OUTPUT FILENAME</label>
+        <div class="input-row">
+          <input
+            type="text"
+            id="filename-input"
+            class="filename-input"
+            placeholder="document_name"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <span class="ext-badge">.txt</span>
+        </div>
+      </section>
+
+      <!-- Status / log display -->
+      <section class="status-section">
+        <div class="lcd-label">OUTPUT LOG</div>
+        <div class="lcd" id="lcd">Ready — drop images into ~/Source</div>
+      </section>
+
+      <!-- Stomp buttons -->
+      <section class="button-section">
+        <div class="stomp-group">
+          <button class="stomp-btn btn-execute" id="btn-execute">
+            EXECUTE
+          </button>
+          <div class="btn-sublabel">OCR ALL IMAGES</div>
+        </div>
+        <div class="stomp-group">
+          <button class="stomp-btn btn-purge" id="btn-purge">
+            PURGE
+          </button>
+          <div class="btn-sublabel">CLEAR SOURCE</div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer info strip -->
+    <footer class="info-strip">
+      <span class="info-item">SRC <span class="info-path">~/Source</span></span>
+      <span class="info-badge" id="img-count">— images</span>
+      <span class="info-item">OUT <span class="info-path">~/DocDestination</span></span>
+    </footer>
+
+  </div>
+
+  <script src="/ui/app.js"></script>
+</body>
+</html>

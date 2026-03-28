@@ -1,0 +1,423 @@
+/* style.css — Guitar stompbox pedal aesthetic for Textifier.
+   The design language: compact matte-metal chassis, industrial typography,
+   a single status LED, and two large stomp-switch buttons.              */
+
+/* ---------------------------------------------------------------- Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------------------------------------------------- Design variables */
+:root {
+  --chassis-bg:     #1c1c1c;
+  --panel-bg:       #242424;
+  --metal-edge:     #3d3d3d;
+  --deep-shadow:    #0a0a0a;
+
+  --led-off:        #3a0a00;
+  --led-idle:       #c43000;
+  --led-active:     #ff3a00;
+  --led-glow:       rgba(255, 58, 0, 0.75);
+  --led-success:    #00e060;
+  --led-success-glow: rgba(0, 224, 96, 0.7);
+  --led-error:      #ff1a1a;
+  --led-error-glow: rgba(255, 26, 26, 0.75);
+
+  --stomp-face:     #2c2c2c;
+  --stomp-execute:  #2c2c2c;
+  --stomp-purge:    #2a1a1a;
+  --stomp-pressed:  #1a1a1a;
+  --stomp-rim:      #111111;
+
+  --text-cream:     #d4c89a;
+  --text-muted:     #666;
+  --text-dim:       #444;
+
+  --lcd-bg:         #0e0e0e;
+  --lcd-text:       #b8d49a;
+
+  --input-bg:       #111;
+  --input-border:   #3a3a3a;
+  --input-text:     #d4c89a;
+  --input-focus:    #555;
+
+  --accent-gold:    #8a6d00;
+  --screw-color:    #4a4a4a;
+}
+
+/* ----------------------------------------------- Page / body baseline */
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+}
+
+/* ---------------------------------------------------- Pedal chassis */
+.pedal {
+  position: relative;
+  width: 420px;
+  /* Height is determined by content — let it breathe naturally */
+  background: var(--chassis-bg);
+  border: 2px solid var(--metal-edge);
+  border-radius: 6px;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    inset 0 -1px 0 rgba(0,0,0,0.5);
+
+  /* Brushed-metal diagonal line texture */
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,0.012) 2px,
+    rgba(255,255,255,0.012) 4px
+  );
+
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ---------------------------------------------------------- Screws */
+.screw {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #5a5a5a, #2a2a2a);
+  border: 1px solid #222;
+  z-index: 10;
+}
+/* Phillips-head cross */
+.screw::before,
+.screw::after {
+  content: '';
+  position: absolute;
+  background: rgba(0,0,0,0.55);
+}
+.screw::before {
+  width: 1px; height: 8px;
+  top: 3px; left: 50%;
+  transform: translateX(-50%);
+}
+.screw::after {
+  width: 8px; height: 1px;
+  left: 3px; top: 50%;
+  transform: translateY(-50%);
+}
+.screw-tl { top: 10px;  left: 10px; }
+.screw-tr { top: 10px;  right: 10px; }
+.screw-bl { bottom: 10px; left: 10px; }
+.screw-br { bottom: 10px; right: 10px; }
+
+/* -------------------------------------------------- Brand plate header */
+.brand-plate {
+  padding: 20px 32px 16px;
+  border-bottom: 1px solid var(--metal-edge);
+  background: linear-gradient(180deg, #202020 0%, #1c1c1c 100%);
+  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.4);
+}
+
+.brand-led-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-name {
+  font-family: 'Oswald', Impact, 'Arial Narrow', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  color: var(--text-cream);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  line-height: 1;
+}
+
+.brand-sub {
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* --------------------------------------------------------- LED assembly */
+.led-assembly {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.led {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--led-off);
+  border: 1px solid #1a1a1a;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.led.idle {
+  background: var(--led-idle);
+  box-shadow: 0 0 6px rgba(196, 48, 0, 0.4);
+}
+
+.led.working {
+  background: var(--led-active);
+  box-shadow: 0 0 10px var(--led-glow), 0 0 20px rgba(255,58,0,0.3);
+  animation: blink 0.6s ease-in-out infinite;
+}
+
+.led.success {
+  background: var(--led-success);
+  box-shadow: 0 0 10px var(--led-success-glow), 0 0 20px rgba(0,224,96,0.3);
+}
+
+.led.error {
+  background: var(--led-error);
+  box-shadow: 0 0 10px var(--led-error-glow);
+  animation: blink-fast 0.3s ease-in-out 4;
+}
+
+.led.purge-confirm {
+  background: var(--led-active);
+  box-shadow: 0 0 10px var(--led-glow);
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.1; }
+}
+
+@keyframes blink-fast {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.15; }
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 8px var(--led-glow); }
+  50%       { box-shadow: 0 0 18px var(--led-glow), 0 0 30px rgba(255,58,0,0.4); }
+}
+
+.led-label {
+  font-size: 7px;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+}
+
+/* ----------------------------------------------------------- Main panel */
+.panel {
+  padding: 18px 28px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--panel-bg);
+}
+
+/* ----------------------------------------------------- Filename input */
+.input-section { display: flex; flex-direction: column; gap: 5px; }
+
+.field-label {
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  color: var(--text-muted);
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.filename-input {
+  flex: 1;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-right: none;
+  border-radius: 3px 0 0 3px;
+  color: var(--input-text);
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 14px;
+  padding: 8px 10px;
+  outline: none;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);
+  transition: border-color 0.15s;
+}
+
+.filename-input::placeholder {
+  color: var(--text-dim);
+}
+
+.filename-input:focus {
+  border-color: var(--input-focus);
+}
+
+.ext-badge {
+  background: #1a1a1a;
+  border: 1px solid var(--input-border);
+  border-left: 1px solid #333;
+  border-radius: 0 3px 3px 0;
+  color: var(--text-muted);
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 13px;
+  padding: 8px 10px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------- LCD status panel */
+.status-section { display: flex; flex-direction: column; gap: 5px; }
+
+.lcd-label {
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  color: var(--text-muted);
+}
+
+.lcd {
+  background: var(--lcd-bg);
+  border: 1px solid #1e1e1e;
+  border-radius: 3px;
+  color: var(--lcd-text);
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  min-height: 48px;
+  padding: 9px 12px;
+  box-shadow:
+    inset 0 2px 8px rgba(0,0,0,0.85),
+    inset 0 0 0 1px rgba(255,255,255,0.02);
+  word-break: break-all;
+}
+
+.lcd.lcd-error  { color: #e06060; }
+.lcd.lcd-ok     { color: var(--lcd-text); }
+
+/* ---------------------------------------------------- Stomp buttons */
+.button-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.stomp-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  flex: 1;
+}
+
+.stomp-btn {
+  width: 100%;
+  height: 72px;
+  border-radius: 8px;
+  border: none;
+  border-bottom: 6px solid var(--stomp-rim);
+  font-family: 'Oswald', Impact, 'Arial Narrow', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--text-cream);
+  text-transform: uppercase;
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 14px rgba(0,0,0,0.65),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 -1px 0 rgba(0,0,0,0.3);
+
+  position: relative;
+  transition: transform 0.07s ease, border-bottom-width 0.07s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-execute {
+  background: var(--stomp-execute);
+  background-image: radial-gradient(ellipse at 50% 20%, #3a3a3a, #2c2c2c);
+}
+
+.btn-purge {
+  background: var(--stomp-purge);
+  background-image: radial-gradient(ellipse at 50% 20%, #3a2020, #2a1a1a);
+}
+
+.stomp-btn:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.stomp-btn:active:not(:disabled) {
+  transform: translateY(4px);
+  border-bottom-width: 2px;
+  box-shadow:
+    0 1px 6px rgba(0,0,0,0.6),
+    inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.stomp-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* "CONFIRM?" state for purge */
+.stomp-btn.confirming {
+  color: #ff6060;
+  border-bottom-color: #5a1a1a;
+  animation: confirm-pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes confirm-pulse {
+  from { filter: brightness(1); }
+  to   { filter: brightness(1.25); }
+}
+
+.btn-sublabel {
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+}
+
+/* ---------------------------------------------------- Footer info strip */
+.info-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 28px 12px;
+  border-top: 1px solid #1e1e1e;
+  background: var(--chassis-bg);
+}
+
+.info-item {
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+.info-path {
+  color: var(--text-muted);
+}
+
+.info-badge {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--accent-gold);
+  background: rgba(0,0,0,0.35);
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid #2a2a2a;
+}
+
+/* -------------------------------------------------- Google Fonts import
+   Loaded last so the page is usable even if offline (falls back to
+   Impact / Courier New). */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Share+Tech+Mono&display=swap');

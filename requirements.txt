@@ -1,0 +1,3 @@
+pywebview[gtk]
+Pillow
+pytesseract
